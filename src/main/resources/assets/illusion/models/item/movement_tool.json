@@ -1,0 +1,26 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "illusion:item/x"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "illusion:state": 0
+      },
+      "model": "illusion:item/movement_tool_x"
+    },
+    {
+      "predicate": {
+        "illusion:state": 1
+      },
+      "model": "illusion:item/movement_tool_y"
+    },
+    {
+      "predicate": {
+        "illusion:state": 2
+      },
+      "model": "illusion:item/movement_tool_z"
+    }
+  ]
+}

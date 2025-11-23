@@ -1,0 +1,20 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "me.linstar.illusion.client.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "illusion.refmap.json",
+  "mixins": [
+    "BlockStateAccessor",
+    "SodiumWorldRenderMixin",
+    "compat.ShowBlockModelMixin"
+  ],
+  "client": [
+    "BlockStateMixin",
+    "ClientLevelMixin",
+    "SodiumBlockRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

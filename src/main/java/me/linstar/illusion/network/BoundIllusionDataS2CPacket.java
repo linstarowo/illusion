@@ -33,9 +33,7 @@ public class BoundIllusionDataS2CPacket {
     }
 
     public void handler(Supplier<NetworkEvent.Context> ctx){
-        ctx.get().enqueueWork(()->{
-            packets.forEach(packet -> packet.execute(false));
-        });
+        ctx.get().enqueueWork(()-> packets.forEach(packet -> packet.execute(false)));
         ctx.get().setPacketHandled(true);
     }
 }

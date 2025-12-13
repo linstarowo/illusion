@@ -30,7 +30,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = BlockRenderer.class, remap = false)
 public abstract class SodiumBlockRendererMixin {
-    @Shadow public abstract void renderModel(BlockRenderContext ctx, ChunkBuildBuffers buffers);
 
     @Shadow
     @Final

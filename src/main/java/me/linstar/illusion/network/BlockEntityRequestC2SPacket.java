@@ -10,27 +10,22 @@ import net.minecraftforge.network.PacketDistributor;
 
 import java.util.function.Supplier;
 
-public class BlockEntityRequestC2SPacket {
-    private final ChunkPos chunkPos;
-
+public record BlockEntityRequestC2SPacket(ChunkPos chunkPos) {
     public BlockEntityRequestC2SPacket(FriendlyByteBuf buffer) {
-        chunkPos = buffer.readChunkPos();
-    }
-
-    public BlockEntityRequestC2SPacket(ChunkPos pos) {
-        this.chunkPos = pos;
+        this(buffer.readChunkPos());
     }
 
     public void writeTo(FriendlyByteBuf buf) {
         buf.writeChunkPos(this.chunkPos);
     }
-    public void handler(Supplier<NetworkEvent.Context> ctx){
-        ctx.get().enqueueWork(()->{
+
+    public void handler(Supplier<NetworkEvent.Context> ctx) {
+        ctx.get().enqueueWork(() -> {
             ServerPlayer player = ctx.get().getSender();
             if (player == null) return;
             if (!player.level().hasChunk(chunkPos.x, chunkPos.z)) return;
 
-            LevelChunk chunk = player.level().getChunk(chunkPos.x, chunkPos.z);
+            LevelChunk chunk = player.level().getChunk(chunkPos.x, chunkPos.z);  //TODO: 考虑服务端区块加载速度
             chunk.getCapability(Illusion.CHUNK_DATA_CAP).ifPresent(cap -> {
                 var packet = new BoundIllusionDataS2CPacket(chunkPos);
                 var keys = cap.getKeys();
@@ -38,7 +33,7 @@ public class BlockEntityRequestC2SPacket {
                 keys.forEach(key -> packet.appendPacket(new IllusionDataS2CPacket(key, cap.getData(key))));
 
                 Network.CHANNEL.send(
-                        PacketDistributor.PLAYER.with(()-> player),
+                        PacketDistributor.PLAYER.with(() -> player),
                         packet
                 );
             });

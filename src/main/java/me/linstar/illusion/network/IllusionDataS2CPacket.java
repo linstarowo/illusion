@@ -1,8 +1,6 @@
 package me.linstar.illusion.network;
 
-import com.mojang.logging.LogUtils;
 import me.jellysquid.mods.sodium.client.render.SodiumWorldRenderer;
-import me.linstar.illusion.client.IllusionClient;
 import me.linstar.illusion.data.IllusionData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -10,7 +8,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.Objects;
@@ -52,11 +49,10 @@ public class IllusionDataS2CPacket {
 
         var sourceState = level.getBlockState(pos);
         level.setBlock(pos, sourceState, 0);
-        LogUtils.getLogger().info("motified! in level");
-//        if (withUpdate) {
-//            for (int y = level.getMinSection(); y < level.getMaxSection(); ++y) {
-//                SodiumWorldRenderer.instance().scheduleRebuildForChunk(chunkPos.x, y, chunkPos.z, false);
-//            }
-//        }
+        if (withUpdate) {
+            for (int y = level.getMinSection(); y < level.getMaxSection(); ++y) {
+                SodiumWorldRenderer.instance().scheduleRebuildForChunk(chunkPos.x, y, chunkPos.z, false);
+            }
+        }
     }
 }

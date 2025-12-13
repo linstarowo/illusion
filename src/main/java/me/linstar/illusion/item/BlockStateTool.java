@@ -24,6 +24,7 @@ public class BlockStateTool extends Item implements IllusionItem {
         super(new Properties());
     }
 
+    //TODO: 变量名优化
     @Override
     public @NotNull InteractionResult useOn(UseOnContext context){
         Level level = context.getLevel();

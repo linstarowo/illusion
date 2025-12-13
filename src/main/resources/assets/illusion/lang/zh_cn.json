@@ -6,7 +6,7 @@
   "item.illusion.movement_tool.state0": "§7移动工具 - §cX轴",
   "item.illusion.movement_tool.state1": "§7移动工具 - §aY轴",
   "item.illusion.movement_tool.state2": "§7移动工具 - §9Z轴",
-  "text.illusion.illusion_crystal": "对可交互方块使用 使其具有与副手方块相同的模型",
+  "text.illusion.illusion_crystal": "对方块实体使用 使其具有与副手方块相同的模型",
   "text.illusion.movement_tool": "右键切换模式 对方块右键正 潜行对方块右键负方向位移",
   "text.illusion.block_state_tool": "§7切换至方块状态 序号: §f%d",
   "gui.illusion.title": "幻形方块"

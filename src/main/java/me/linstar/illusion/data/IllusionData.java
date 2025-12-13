@@ -3,13 +3,13 @@ package me.linstar.illusion.data;
 import com.yuushya.modelling.blockentity.ITransformDataInventory;
 import com.yuushya.modelling.blockentity.TransformData;
 import com.yuushya.modelling.registries.YuushyaRegistries;
-import me.linstar.illusion.client.IllusionClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -92,8 +92,6 @@ public class IllusionData {
     }
 
     public abstract static class ModelData{
-        public static final String MODEL_DATA = "data";
-
         private ModelData(@Nullable CompoundTag tag) {
             if (tag != null) this.onLoad(tag);
         }
@@ -207,16 +205,10 @@ public class IllusionData {
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
-    public static boolean containsData(BlockPos pos){
-        var level = Minecraft.getInstance().level;
-        assert level != null;
+    public static boolean containsData(BlockGetter getter, BlockPos pos){
+        var blockEntity = getter.getBlockEntity(pos);
+        if (blockEntity == null) return false;
 
-        var blockEntity = level.getBlockEntity(pos);
-        if (blockEntity == null) {
-            return false;
-        }else {
-            return blockEntity.getPersistentData().contains(NAME);
-        }
+        return blockEntity.getPersistentData().contains(IllusionData.NAME);
     }
 }

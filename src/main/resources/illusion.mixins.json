@@ -5,14 +5,13 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "illusion.refmap.json",
   "mixins": [
-    "BlockStateAccessor",
-    "SodiumWorldRenderMixin",
-    "compat.ShowBlockModelMixin"
   ],
   "client": [
-    "BlockStateMixin",
-    "ClientLevelMixin",
-    "SodiumBlockRendererMixin"
+    "BlockStateAccessor",
+    "BlockStateBaseMixin",
+    "SodiumBlockRendererMixin",
+    "SodiumWorldRenderMixin",
+    "compat.ShowBlockModelMixin"
   ],
   "injectors": {
     "defaultRequire": 1

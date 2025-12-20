@@ -6,8 +6,9 @@
   "item.illusion.movement_tool.state0": "§7Move Tool - §cX-axis",
   "item.illusion.movement_tool.state1": "§7Move Tool - §aY-axis",
   "item.illusion.movement_tool.state2": "§7Move Tool - §9Z-axis",
-  "text.illusion.illusion_crystal": "Use to blockentity, make it have the same model as the offhand block",
-  "text.illusion.movement_tool": "Right-click to switch modes, Shift+Right click to make block move in negative direction and vice versa",
+  "tooltip.illusion.illusion_crystal": "Use to blockentity, make it have the same model as the offhand block",
+  "tooltip.illusion.movement_tool": "Right-click into the air to switch direction\n Right click to a Illusioned block to make it move. Shift+Right click to make it move in reverse",
+  "tooltip.illusion.block_state_tool": "Right click to a Illusioned block to switch its blockstate",
   "text.illusion.block_state_tool": "§7Switch to BlockState-Index: §f%d",
   "gui.illusion.title": "Illusion Block"
 }

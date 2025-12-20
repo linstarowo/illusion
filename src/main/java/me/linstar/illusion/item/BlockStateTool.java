@@ -11,6 +11,8 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -18,10 +20,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nullable;
+import java.util.List;
+
 public class BlockStateTool extends Item implements IllusionItem {
     public static final String NAME = "block_state_tool";
     public BlockStateTool() {
-        super(new Properties());
+        super(new Properties().stacksTo(1));
     }
 
     //TODO: 变量名优化
@@ -65,5 +70,10 @@ public class BlockStateTool extends Item implements IllusionItem {
                 new IllusionDataS2CPacket(pos, blockData)
         );
         return InteractionResult.FAIL;
+    }
+
+    @Override
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level p_41422_, List<Component> components, @NotNull TooltipFlag flag) {
+        components.add(Component.translatable("tooltip.illusion.block_state_tool"));
     }
 }

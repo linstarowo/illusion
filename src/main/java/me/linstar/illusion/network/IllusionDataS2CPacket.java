@@ -47,8 +47,8 @@ public class IllusionDataS2CPacket {
         data.saveToBlock(blockEntity.getPersistentData());
         ChunkPos chunkPos = level.getChunkAt(blockEntity.getBlockPos()).getPos();
 
-        var sourceState = level.getBlockState(pos);
-        level.setBlock(pos, sourceState, 0);
+//        var sourceState = level.getBlockState(pos);
+//        level.setBlock(pos, sourceState, 0);
         if (withUpdate) {
             for (int y = level.getMinSection(); y < level.getMaxSection(); ++y) {
                 SodiumWorldRenderer.instance().scheduleRebuildForChunk(chunkPos.x, y, chunkPos.z, false);

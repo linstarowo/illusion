@@ -36,6 +36,13 @@ public class Network {
                 .consumerNetworkThread((paket, ctx) -> {
                     ctx.get().setPacketHandled(true);
                 }).add();
+
+        CHANNEL.messageBuilder(RemoveDataS2CPacket.class, 3)
+                .encoder(RemoveDataS2CPacket::writeTo)
+                .decoder(RemoveDataS2CPacket::new)
+                .consumerNetworkThread((paket, ctx) -> {
+                    ctx.get().setPacketHandled(true);
+                }).add();
     }
 
     public static void buildClient(){
@@ -53,5 +60,10 @@ public class Network {
                 .encoder(BoundIllusionDataS2CPacket::writeTo)
                 .decoder(BoundIllusionDataS2CPacket::new)
                 .consumerNetworkThread(BoundIllusionDataS2CPacket::handler).add();
+
+        CHANNEL.messageBuilder(RemoveDataS2CPacket.class, 3)
+                .encoder(RemoveDataS2CPacket::writeTo)
+                .decoder(RemoveDataS2CPacket::new)
+                .consumerNetworkThread(RemoveDataS2CPacket::handler).add();
     }
 }

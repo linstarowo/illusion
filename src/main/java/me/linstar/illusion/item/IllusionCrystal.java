@@ -5,6 +5,7 @@ import me.linstar.illusion.Illusion;
 import me.linstar.illusion.data.IllusionData;
 import me.linstar.illusion.network.IllusionDataS2CPacket;
 import me.linstar.illusion.network.Network;
+import me.linstar.illusion.network.RemoveDataS2CPacket;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -26,7 +27,7 @@ import java.util.List;
 public class IllusionCrystal extends Item implements IllusionItem {
     public static final String NAME = "illusion_crystal";
     public IllusionCrystal() {
-        super(new Properties());
+        super(new Properties().stacksTo(1));
     }
 
     @Override
@@ -56,13 +57,18 @@ public class IllusionCrystal extends Item implements IllusionItem {
 
             player.playNotifySound(SoundEvents.AMETHYST_BLOCK_BREAK, SoundSource.BLOCKS, 1.0F, 1.0F);
             Network.CHANNEL.send(
-                    PacketDistributor.PLAYER.with(()-> player),
+                    PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(pos.getX(), pos.getY(), pos.getZ(), player.getServer().getPlayerList().getViewDistance() * 16, level.dimension())),
                     new IllusionDataS2CPacket(pos, illusionData)
             );
 
             player.getMainHandItem().shrink(1);
-        }else {
-            return InteractionResult.CONSUME;
+        }else if (stack.isEmpty()){
+            player.playNotifySound(SoundEvents.AMETHYST_BLOCK_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
+            Network.CHANNEL.send(
+                    PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(pos.getX(), pos.getY(), pos.getZ(), player.getServer().getPlayerList().getViewDistance() * 16, level.dimension())),
+                    new RemoveDataS2CPacket(pos)
+            );
+            player.getMainHandItem().shrink(1);
         }
 
         return InteractionResult.FAIL;
@@ -71,6 +77,6 @@ public class IllusionCrystal extends Item implements IllusionItem {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level p_41422_, List<Component> components, @NotNull TooltipFlag flag) {
-        components.add(Component.translatable("text.illusion.illusion_crystal"));
+        components.add(Component.translatable("tooltip.illusion.illusion_crystal"));
     }
 }

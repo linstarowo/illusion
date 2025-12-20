@@ -30,9 +30,11 @@ import java.util.List;
 public class MovementTool extends Item implements IllusionItem {
     public static final String NAME = "movement_tool";
     public static final String STATE = "state";
+
     public MovementTool() {
-        super(new Properties());
+        super(new Properties().stacksTo(1));
     }
+
     public static void change(ItemStack stack){
         int state = stack.getOrCreateTag().getInt("state");
         stack.getOrCreateTag().putInt("state", changeState(state));
@@ -109,6 +111,6 @@ public class MovementTool extends Item implements IllusionItem {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level p_41422_, List<Component> components, @NotNull TooltipFlag flag) {
-        components.add(Component.translatable("text.illusion.movement_tool"));
+        components.add(Component.translatable("tooltip.illusion.movement_tool"));
     }
 }

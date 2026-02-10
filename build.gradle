@@ -89,6 +89,7 @@ dependencies {
     compileOnly "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
 
     implementation "curse.maven:mixin-args-1257105:6488404"
+
     implementation (annotationProcessor("io.github.llamalad7:mixinextras-common:0.4.1"))
     implementation(jarJar("io.github.llamalad7:mixinextras-forge:0.4.1")){
         jarJar.ranged(it, "[0.4.1,)")

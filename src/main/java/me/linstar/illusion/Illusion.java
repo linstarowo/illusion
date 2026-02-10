@@ -33,6 +33,8 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.slf4j.Logger;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 @Mod(Illusion.MOD_ID)
 public class Illusion {
     public static final String MOD_ID = "illusion";
@@ -45,6 +47,8 @@ public class Illusion {
     public static final RegistryObject<Item> ILLUSION_CRYSTAL = ITEMS.register(IllusionCrystal.NAME, IllusionCrystal::new);
     public static final RegistryObject<Item> BLOCK_STATE_TOOL = ITEMS.register(BlockStateTool.NAME, BlockStateTool::new);
     public static final RegistryObject<Item> MOVEMENT_TOOL = ITEMS.register(MovementTool.NAME, MovementTool::new);
+
+    private static AtomicBoolean isYuushyaInstalled;
 
     public static final RegistryObject<CreativeModeTab> TAB = CREATIVE_MODE_TABS.register("example_tab", () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.illusion_group"))
@@ -97,6 +101,18 @@ public class Illusion {
             cap.deleteData(pos);
             chunk.setUnsaved(true);
         });
+    }
+
+    public static boolean isYuushyaInstalled(){
+        if(isYuushyaInstalled == null){
+            isYuushyaInstalled = new AtomicBoolean();
+            try{
+                var cls = Class.forName("com.yuushya.modelling.Yuushya");
+                isYuushyaInstalled.set(true);
+            }catch (Exception ignored){}
+        }
+
+        return isYuushyaInstalled.get();
     }
 
 }

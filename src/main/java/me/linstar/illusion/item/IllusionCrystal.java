@@ -48,7 +48,7 @@ public class IllusionCrystal extends Item implements IllusionItem {
 
         if (stack.getItem() instanceof BlockItem){
             var block = ((BlockItem)stack.getItem()).getBlock();
-            var illusionData = new IllusionData(Vec3.ZERO, (block.equals(YuushyaRegistries.SHOW_BLOCK.get())) ? new IllusionData.YuushayaModelData(stack) : new IllusionData.BlockModelData(block, 0));
+            var illusionData = new IllusionData(Vec3.ZERO, (Illusion.isYuushyaInstalled() && block.equals(YuushyaRegistries.SHOW_BLOCK.get())) ? new IllusionData.YuushayaModelData(stack) : new IllusionData.BlockModelData(block, 0));
 
             chunk.getCapability(Illusion.CHUNK_DATA_CAP).ifPresent(c -> {
                 c.updateData(pos, illusionData);

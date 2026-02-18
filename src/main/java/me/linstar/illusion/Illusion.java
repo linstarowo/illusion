@@ -2,6 +2,7 @@ package me.linstar.illusion;
 
 import com.mojang.logging.LogUtils;
 import me.linstar.illusion.capability.IIllusionChunkData;
+import me.linstar.illusion.command.TransformDataCommand;
 import me.linstar.illusion.item.BlockStateTool;
 import me.linstar.illusion.item.IllusionCrystal;
 import me.linstar.illusion.item.IllusionItem;
@@ -10,6 +11,7 @@ import me.linstar.illusion.network.Network;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
@@ -19,6 +21,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -38,6 +41,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Mod(Illusion.MOD_ID)
 public class Illusion {
     public static final String MOD_ID = "illusion";
+    public static final ResourceLocation EMPTY_LOCATION = new ResourceLocation("");
+
     public static final Logger LOGGER = LogUtils.getLogger();
     public static final Capability<IIllusionChunkData> CHUNK_DATA_CAP = CapabilityManager.get(new CapabilityToken<>(){});
 
@@ -88,6 +93,11 @@ public class Illusion {
         if (event.getItemStack().getItem() instanceof IllusionItem){
             event.setUseBlock(Event.Result.DENY);
         }
+    }
+
+    @SubscribeEvent
+    public void onRegisterCommand(RegisterCommandsEvent event){
+        TransformDataCommand.register(event.getDispatcher());
     }
 
     @SubscribeEvent

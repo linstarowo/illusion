@@ -206,6 +206,7 @@ public class IllusionData {
     }
 
     public static boolean containsData(BlockGetter getter, BlockPos pos){
+        if (getter == null) return false;
         var blockEntity = getter.getBlockEntity(pos);
         if (blockEntity == null) return false;
 

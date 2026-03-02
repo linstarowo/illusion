@@ -13,11 +13,14 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.SectionPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkStatus;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.model.data.ModelData;
 import org.spongepowered.asm.mixin.Final;
@@ -89,7 +92,10 @@ public abstract class SodiumBlockRendererMixin {
         Level level = Minecraft.getInstance().level;
         if (level == null) return result;
 
-        BlockEntity blockEntity = level.getBlockEntity(pos);
+        LevelChunk chunk = (LevelChunk) level.getChunk(SectionPos.blockToSectionCoord(pos.getX()), SectionPos.blockToSectionCoord(pos.getZ()), ChunkStatus.FULL, false);
+        if (chunk == null) return result;
+
+        BlockEntity blockEntity = chunk.getBlockEntity(pos);
         if (blockEntity == null) return result;
 
         if (blockEntity.getPersistentData().contains(IllusionData.NAME)) return true;

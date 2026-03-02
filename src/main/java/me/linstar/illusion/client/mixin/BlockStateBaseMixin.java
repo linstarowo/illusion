@@ -42,4 +42,11 @@ public abstract class BlockStateBaseMixin {
             cir.setReturnValue(EMPTY_SHAPE);
         }
     }
+
+    @Inject(method = "getLightBlock", at = @At("HEAD"), cancellable = true)
+    private void modifyLightBlock(BlockGetter getter, BlockPos pos, CallbackInfoReturnable<Integer> cir){
+        if (this.hasBlockEntity()){
+            cir.setReturnValue(0);
+        }
+    }
 }

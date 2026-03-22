@@ -10,6 +10,7 @@ import me.linstar.illusion.client.wrapper.WrappedBakedModel;
 import me.linstar.illusion.data.IllusionData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -58,7 +59,7 @@ public abstract class SodiumBlockRendererMixin {
         ModelData forgeModelData = model.getModelData(ctx.localSlice(), ctx.pos(), state, ModelData.EMPTY);
         var warpedModel = new WrappedBakedModel(model);
 
-        ctx.update(ctx.pos(), origin, state, warpedModel, ctx.seed(), forgeModelData, ctx.renderLayer());
+        ctx.update(ctx.pos(), origin, state, warpedModel, ctx.seed(), forgeModelData, RenderType.cutout());
     }
 
     @WrapOperation(method = "renderModel", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;hasOffsetFunction()Z"), remap = true)

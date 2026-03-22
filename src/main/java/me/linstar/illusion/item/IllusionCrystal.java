@@ -1,6 +1,6 @@
 package me.linstar.illusion.item;
 
-import com.yuushya.modelling.registries.YuushyaRegistries;
+import com.yuushya.modelling.registries.BlockRegistry;
 import me.linstar.illusion.Illusion;
 import me.linstar.illusion.data.IllusionData;
 import me.linstar.illusion.network.IllusionDataS2CPacket;
@@ -48,8 +48,22 @@ public class IllusionCrystal extends Item implements IllusionItem {
 
         if (stack.getItem() instanceof BlockItem){
             var block = ((BlockItem)stack.getItem()).getBlock();
-            var illusionData = new IllusionData(Vec3.ZERO, (Illusion.isYuushyaInstalled() && block.equals(YuushyaRegistries.SHOW_BLOCK.get())) ? new IllusionData.YuushayaModelData(stack) : new IllusionData.BlockModelData(block, 0));
+//            var illusionData = new IllusionData(Vec3.ZERO, (Illusion.isYuushyaInstalled() && block.equals(BlockRegistry.SHOW_BLOCK.get())) ? new IllusionData.YuushayaModelData(stack) : new IllusionData.BlockModelData(block, 0));
 
+            IllusionData illusionData;
+            if (Illusion.isYuushyaInstalled()){
+                if (block.equals(BlockRegistry.SHOW_BLOCK.get())){
+                    illusionData = new IllusionData(Vec3.ZERO, new IllusionData.YuushayaModelData(stack));
+                }else if (block.equals(BlockRegistry.TEXT_BLOCK.get())){
+                    illusionData = new IllusionData(Vec3.ZERO, new IllusionData.YuushayaTextModelData(stack));
+                }else if (block.equals(BlockRegistry.ITEM_BLOCK.get())){
+                    illusionData = new IllusionData(Vec3.ZERO, new IllusionData.YuushayaItemModelData(stack));
+                }else {
+                    illusionData = new IllusionData(Vec3.ZERO, new IllusionData.BlockModelData(block, 0));
+                }
+            }else {
+                illusionData = new IllusionData(Vec3.ZERO, new IllusionData.BlockModelData(block, 0));
+            }
             chunk.getCapability(Illusion.CHUNK_DATA_CAP).ifPresent(c -> {
                 c.updateData(pos, illusionData);
                 chunk.setUnsaved(true);

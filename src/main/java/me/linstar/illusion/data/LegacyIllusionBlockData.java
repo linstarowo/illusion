@@ -14,7 +14,7 @@ public record LegacyIllusionBlockData(Vec3 offset, ResourceLocation block, int s
     public static final String BLOCK_ID = "id";
 
     public LegacyIllusionBlockData(CompoundTag tag){
-        this(new Vec3(tag.getDouble(OFFSET_X), tag.getDouble(OFFSET_Y), tag.getDouble(OFFSET_Z)), new ResourceLocation(tag.getString(BLOCK_ID)), tag.getInt(STATE));
+        this(new Vec3(tag.getDouble(OFFSET_X), tag.getDouble(OFFSET_Y), tag.getDouble(OFFSET_Z)), ResourceLocation.tryParse(tag.getString(BLOCK_ID)), tag.getInt(STATE));
     }
 
     public IllusionData transformToNewData(){

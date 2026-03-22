@@ -1,6 +1,6 @@
 package me.linstar.illusion.client.mixin.compat;
 
-import com.yuushya.modelling.forge.client.ShowBlockModel;
+import com.yuushya.modelling.client.NeoShowBlockModel;
 import me.linstar.illusion.data.IllusionData;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -21,7 +21,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 
-@Mixin(value = ShowBlockModel.class, remap = false)
+@Mixin(value = NeoShowBlockModel.class, remap = false)
 public abstract class ShowBlockModelMixin extends com.yuushya.modelling.blockentity.showblock.ShowBlockModel {
     @Unique
     private static final ModelProperty<IllusionData> BASE_BLOCK_ENTITY = new ModelProperty<>();
@@ -43,8 +43,8 @@ public abstract class ShowBlockModelMixin extends com.yuushya.modelling.blockent
     @Inject(method = "getQuads", at = @At("HEAD"), cancellable = true)
     private void getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource rand, @NotNull ModelData data, @Nullable RenderType renderType, CallbackInfoReturnable<List<BakedQuad>> cir){
         IllusionData illusionData = data.get(BASE_BLOCK_ENTITY);
-        if (illusionData != null) {
-            cir.setReturnValue(super.getQuads(state, side, rand, ((IllusionData.YuushayaModelData) illusionData.getModelData()).transformData()));
+        if (illusionData != null && illusionData.getModelData() instanceof IllusionData.YuushayaModelData modelData) {
+            cir.setReturnValue(super.getQuads(state, side, rand, modelData.transformData()));
         }
     }
 }

@@ -1,8 +1,7 @@
 package me.linstar.illusion.data;
 
-import com.yuushya.modelling.blockentity.ITransformDataInventory;
-import com.yuushya.modelling.blockentity.TransformData;
-import com.yuushya.modelling.registries.YuushyaRegistries;
+import com.yuushya.modelling.blockentity.transformData.*;
+import com.yuushya.modelling.registries.BlockRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
@@ -20,6 +19,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
@@ -45,7 +45,7 @@ public class IllusionData {
     public IllusionData(final Vec3 offset, final ModelData data) {
         this.offset = offset;
         this.data = data;
-        this.type = (data instanceof BlockModelData) ? DataType.BLOCK : DataType.CUSTOM;
+        this.type = DataType.fetch(data);
     }
 
     public CompoundTag save() {
@@ -81,13 +81,20 @@ public class IllusionData {
     }
 
     public enum DataType {
-        BLOCK(BlockModelData::new),
-        CUSTOM(YuushayaModelData::new);
+        BLOCK(BlockModelData.class ,BlockModelData::new),
+        CUSTOM(YuushayaModelData.class ,YuushayaModelData::new),
+        CUSTOM_ITEM(YuushayaItemModelData.class, YuushayaItemModelData::new);
 
+        final Class<?> clazz;
         final Function<CompoundTag, ModelData> supplier;
 
-        DataType(Function<CompoundTag, ModelData> supplier) {
+        DataType(Class<?> clazz ,Function<CompoundTag, ModelData> supplier) {
+            this.clazz = clazz;
             this.supplier = supplier;
+        }
+
+        public static <T extends ModelData> DataType fetch(T type){
+            return Arrays.stream(DataType.values()).filter(dataType -> dataType.clazz == type.getClass()).findFirst().orElse(null);
         }
     }
 
@@ -104,8 +111,92 @@ public class IllusionData {
         public abstract BlockState getState();
     }
 
+    public static class YuushayaTextModelData extends ModelData{
+        List<TransformTextData> transformData;
+
+        private YuushayaTextModelData(CompoundTag tag) {
+            super(tag);
+        }
+
+        public YuushayaTextModelData(ItemStack stack){
+            super(null);
+            this.transformData = new ArrayList<>();
+            var tag = Objects.requireNonNull(stack.getTagElement("BlockEntityTag"));
+            ITransformTextDataInventory.load(tag, this.transformData);
+        }
+
+        @Override
+        public CompoundTag saveTo() {
+            CompoundTag tag = new CompoundTag();
+            ITransformDataInventory.saveAdditional(tag, this.transformData);
+            return tag;
+        }
+
+        @Override
+        public BakedModel getModel() {
+            return Minecraft.getInstance().getBlockRenderer().getBlockModel(this.getState());
+        }
+
+        @Override
+        public BlockState getState() {
+            return BlockRegistry.TEXT_BLOCK.get().defaultBlockState();
+        }
+
+        @Override
+        protected void onLoad(CompoundTag tag) {
+            this.transformData = new ArrayList<>();
+            ITransformTextDataInventory.load(tag, this.transformData);
+        }
+
+        public List<TransformTextData> transformData() {
+            return transformData;
+        }
+    }
+
+    public static class YuushayaItemModelData extends ModelData{
+        List<TransformItemData> transformData;
+
+        private YuushayaItemModelData(CompoundTag tag) {
+            super(tag);
+        }
+
+        public YuushayaItemModelData(ItemStack stack){
+            super(null);
+            this.transformData = new ArrayList<>();
+            var tag = Objects.requireNonNull(stack.getTagElement("BlockEntityTag"));
+            ITransformItemDataInventory.load(tag, this.transformData);
+        }
+
+        @Override
+        public CompoundTag saveTo() {
+            CompoundTag tag = new CompoundTag();
+            ITransformDataInventory.saveAdditional(tag, this.transformData);
+            return tag;
+        }
+
+        @Override
+        public BakedModel getModel() {
+            return Minecraft.getInstance().getBlockRenderer().getBlockModel(this.getState());
+        }
+
+        @Override
+        public BlockState getState() {
+            return BlockRegistry.ITEM_BLOCK.get().defaultBlockState();
+        }
+
+        @Override
+        protected void onLoad(CompoundTag tag) {
+            this.transformData = new ArrayList<>();
+            ITransformItemDataInventory.load(tag, this.transformData);
+        }
+
+        public List<TransformItemData> transformData() {
+            return transformData;
+        }
+    }
+
     public static class YuushayaModelData extends ModelData{
-        List<TransformData> transformData;
+        List<TransformBlockData> transformData;
 
         private YuushayaModelData(CompoundTag tag) {
             super(tag);
@@ -132,7 +223,7 @@ public class IllusionData {
 
         @Override
         public BlockState getState() {
-            return YuushyaRegistries.SHOW_BLOCK.get().defaultBlockState();
+            return BlockRegistry.SHOW_BLOCK.get().defaultBlockState();
         }
 
         @Override
@@ -141,7 +232,7 @@ public class IllusionData {
             ITransformDataInventory.load(tag, this.transformData);
         }
 
-        public List<TransformData> transformData() {
+        public List<TransformBlockData> transformData() {
             return transformData;
         }
     }
@@ -187,7 +278,7 @@ public class IllusionData {
             var blockId = tag.getString("id");
             var state = tag.getInt("state");
 
-            var block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(blockId));
+            var block = ForgeRegistries.BLOCKS.getValue(ResourceLocation.tryParse(blockId));
             this.block = (block != null) ? block : Blocks.AIR;
             this.state = state;
         }

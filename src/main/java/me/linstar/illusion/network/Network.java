@@ -10,7 +10,7 @@ public class Network {
     public static final String VERSION = "1.0";
     public static void register(){
         CHANNEL = NetworkRegistry.newSimpleChannel(
-                new ResourceLocation(Illusion.MOD_ID, "bec"),
+                ResourceLocation.tryBuild(Illusion.MOD_ID, "bec"),
                 ()-> VERSION,
                 (version) -> version.equals(VERSION),
                 (version) -> version.equals(VERSION)

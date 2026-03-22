@@ -21,7 +21,7 @@ import java.util.Collection;
 
 @Mod.EventBusSubscriber
 public class IllusionChunkDataProvider implements ICapabilitySerializable<CompoundTag> {
-    public static final ResourceLocation IDENTIFIER = new ResourceLocation(Illusion.MOD_ID, "chunk_data");
+    public static final ResourceLocation IDENTIFIER = ResourceLocation.tryBuild(Illusion.MOD_ID, "chunk_data");
 
     private final IIllusionChunkData data = new IllusionChunkData();
     private final LazyOptional<IIllusionChunkData> dataOptional = LazyOptional.of(() -> data);

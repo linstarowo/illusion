@@ -41,25 +41,26 @@ public abstract class SodiumBlockRendererMixin {
 
     @Inject(method = "renderModel", at = @At("HEAD"))
     public void onRenderModel(BlockRenderContext ctx, ChunkBuildBuffers buffers, CallbackInfo info){
-        var level = Minecraft.getInstance().level;
-        if (level == null) return;
+        try {
+            var level = ctx.localSlice();
+            var blockEntity = level.getBlockEntity(ctx.pos());
+            if (blockEntity == null) return;
 
-        BlockEntity blockEntity = level.getBlockEntity(ctx.pos());
-        if (blockEntity == null) return;
-        var persistentData = blockEntity.getPersistentData();
-        if (!persistentData.contains(IllusionData.NAME)) return;
+            var persistentData = blockEntity.getPersistentData();
+            if (!persistentData.contains(IllusionData.NAME)) return;
 
-        IllusionData data = new IllusionData(persistentData.getCompound(IllusionData.NAME));
+            IllusionData data = new IllusionData(persistentData.getCompound(IllusionData.NAME));
 
-        var modelData = data.getModelData();
-        BlockState state = modelData.getState();
-        BakedModel model = modelData.getModel();
-        BlockPos origin = new BlockPos((int) ctx.origin().x(), (int) ctx.origin().y(), (int) ctx.origin().z());
+            var modelData = data.getModelData();
+            BlockState state = modelData.getState();
+            BakedModel model = modelData.getModel();
+            BlockPos origin = new BlockPos((int) ctx.origin().x(), (int) ctx.origin().y(), (int) ctx.origin().z());
 
-        ModelData forgeModelData = model.getModelData(ctx.localSlice(), ctx.pos(), state, ModelData.EMPTY);
-        var warpedModel = new WrappedBakedModel(model);
+            ModelData forgeModelData = model.getModelData(ctx.localSlice(), ctx.pos(), state, ModelData.EMPTY);
+            var warpedModel = new WrappedBakedModel(model);
 
-        ctx.update(ctx.pos(), origin, state, warpedModel, ctx.seed(), forgeModelData, RenderType.cutout());
+            ctx.update(ctx.pos(), origin, state, warpedModel, ctx.seed(), forgeModelData, RenderType.cutout());
+        }catch (Exception ignore){}
     }
 
     @WrapOperation(method = "renderModel", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;hasOffsetFunction()Z"), remap = true)
@@ -69,37 +70,43 @@ public abstract class SodiumBlockRendererMixin {
 
     @WrapOperation(method = "renderModel", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;getOffset(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/phys/Vec3;"), remap = true)
     public Vec3 getOffset(BlockState instance, BlockGetter blockGetter, BlockPos pos, Operation<Vec3> original){
-        ClientLevel level = Minecraft.getInstance().level;
-        if (level == null) return null;
+        try {
+            BlockEntity blockEntity = blockGetter.getBlockEntity(pos);
+            if (blockEntity == null) return instance.getOffset(blockGetter, pos);
 
-        BlockEntity blockEntity = level.getBlockEntity(pos);
-        if (blockEntity == null) return instance.getOffset(blockGetter, pos);
-
-        CompoundTag tag = blockEntity.getPersistentData();
-        if (tag.contains(IllusionData.NAME)){
-            IllusionData data = new IllusionData(tag.getCompound(IllusionData.NAME));
-            return data.getOffset();
-        }
+            CompoundTag tag = blockEntity.getPersistentData();
+            if (tag.contains(IllusionData.NAME)) {
+                IllusionData data = new IllusionData(tag.getCompound(IllusionData.NAME));
+                return data.getOffset();
+            }
+        }catch (Exception ignore){}
 
         return instance.getOffset(blockGetter, pos);
     }
 
     @Redirect(method = "renderModel", at = @At(value = "INVOKE", target = "Lme/jellysquid/mods/sodium/client/render/chunk/compile/pipeline/BlockRenderer;isFaceVisible(Lme/jellysquid/mods/sodium/client/render/chunk/compile/pipeline/BlockRenderContext;Lnet/minecraft/core/Direction;)Z"))
     public boolean isFaceVisible(BlockRenderer instance, BlockRenderContext ctx, Direction face){
-        if(ctx.model() instanceof WrappedBakedModel) return true;
         boolean result = this.occlusionCache.shouldDrawSide(ctx.state(), ctx.localSlice(), ctx.pos(), face);
+        try {
+            if (ctx.model() instanceof WrappedBakedModel) return true;
 
-        BlockPos pos = ctx.pos().offset(new BlockPos(face.getNormal()));
-        Level level = Minecraft.getInstance().level;
-        if (level == null) return result;
+            BlockPos pos = ctx.pos().offset(new BlockPos(face.getNormal()));
+            var level = ctx.localSlice();
+            //Check is same chunk
+            if (SectionPos.blockToSectionCoord(pos.getX()) != SectionPos.blockToSectionCoord(ctx.pos().getX()) ||
+                    SectionPos.blockToSectionCoord(pos.getZ()) != SectionPos.blockToSectionCoord(ctx.pos().getZ())){
+                return result;
+            }
 
-        LevelChunk chunk = (LevelChunk) level.getChunk(SectionPos.blockToSectionCoord(pos.getX()), SectionPos.blockToSectionCoord(pos.getZ()), ChunkStatus.FULL, false);
-        if (chunk == null) return result;
+//            LevelChunk chunk = (LevelChunk) level.getChunk(SectionPos.blockToSectionCoord(pos.getX()), SectionPos.blockToSectionCoord(pos.getZ()), ChunkStatus.FULL, false);
+//            if (chunk == null) return result;
 
-        BlockEntity blockEntity = chunk.getBlockEntity(pos);
-        if (blockEntity == null) return result;
+            BlockEntity blockEntity = level.getBlockEntity(pos);
+            if (blockEntity == null) return result;
 
-        if (blockEntity.getPersistentData().contains(IllusionData.NAME)) return true;
+            if (blockEntity.getPersistentData().contains(IllusionData.NAME)) return true;
+        }catch (Exception ignore){
+        }
 
         return result;
     }

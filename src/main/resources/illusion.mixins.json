@@ -11,8 +11,8 @@
     "BlockStateBaseMixin",
     "SodiumBlockRendererMixin",
     "SodiumWorldRenderMixin",
-    "compat.ShowBlockModelMixin",
-    "compat.ItemBlockModelMixin"
+    "compat.ItemBlockModelMixin",
+    "compat.ShowBlockModelMixin"
   ],
   "injectors": {
     "defaultRequire": 0

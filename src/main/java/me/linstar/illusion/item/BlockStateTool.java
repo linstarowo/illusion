@@ -2,9 +2,11 @@ package me.linstar.illusion.item;
 
 import com.google.common.collect.ImmutableList;
 import me.linstar.illusion.Illusion;
+import me.linstar.illusion.capability.IIllusionChunkData;
 import me.linstar.illusion.data.IllusionData;
 import me.linstar.illusion.network.IllusionDataS2CPacket;
 import me.linstar.illusion.network.Network;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -16,7 +18,10 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,46 +34,55 @@ public class BlockStateTool extends Item implements IllusionItem {
         super(new Properties().stacksTo(1));
     }
 
-    //TODO: 变量名优化
     @Override
     public @NotNull InteractionResult useOn(UseOnContext context){
         Level level = context.getLevel();
 
-        if (level.isClientSide) return InteractionResult.SUCCESS;
+        if (level.isClientSide) {
+            return InteractionResult.SUCCESS;
+        }
 
-        var pos = context.getClickedPos();
-        var chunk = level.getChunkAt(pos);
-        var optional = chunk.getCapability(Illusion.CHUNK_DATA_CAP);
-        var blockEntity = level.getBlockEntity(pos);
+        BlockPos pos = context.getClickedPos();
+        LevelChunk chunk = level.getChunkAt(pos);
 
-        if (blockEntity == null || !optional.isPresent()) return InteractionResult.CONSUME;
+        LazyOptional<IIllusionChunkData> capabilityOptional = chunk.getCapability(Illusion.CHUNK_DATA_CAP);
+        BlockEntity blockEntity = level.getBlockEntity(pos);
 
-        var capability = optional.orElseThrow(NullPointerException::new);
-        var blockData = capability.getData(pos);
-        if (blockData == null) return InteractionResult.CONSUME;
+        if (blockEntity == null || !capabilityOptional.isPresent()) {
+            return InteractionResult.CONSUME;
+        }
 
-        if (blockData.getType() != IllusionData.DataType.BLOCK) return InteractionResult.CONSUME;
+        @SuppressWarnings("OptionalGetWithoutIsPresent")
+        IIllusionChunkData capability = capabilityOptional.resolve().get();
+        IllusionData illusionData = capability.getData(pos);
 
-        var modelData = (IllusionData.BlockModelData) blockData.getModelData();
+        if (illusionData == null || illusionData.getType() != IllusionData.DataType.BLOCK) {
+            return InteractionResult.CONSUME;
+        }
+
+        IllusionData.BlockModelData modelData = (IllusionData.BlockModelData) illusionData.getModelData();
         Block targetBlock = modelData.block();
-        ImmutableList<BlockState> blockStates = targetBlock.getStateDefinition().getPossibleStates();
+        ImmutableList<BlockState> possibleStates = targetBlock.getStateDefinition().getPossibleStates();
 
-        int state = modelData.state();
-        state = (state + 1 == blockStates.size()) ? 0 : state + 1;
+        int currentState = modelData.state();
+        int nextState = (currentState + 1) % possibleStates.size();
+        modelData.setState(nextState);
 
-        modelData.setState(state);
         chunk.setUnsaved(true);
 
         ServerPlayer serverPlayer = (ServerPlayer) context.getPlayer();
-        if (serverPlayer == null) return InteractionResult.CONSUME;
+        if (serverPlayer == null) {
+            return InteractionResult.CONSUME;
+        }
 
-        serverPlayer.playNotifySound(SoundEvents.STONE_PRESSURE_PLATE_CLICK_ON, SoundSource.BLOCKS, 1, 1);
-        serverPlayer.sendSystemMessage(Component.translatable("text.illusion.block_state_tool", state), true);
+        serverPlayer.playNotifySound(SoundEvents.STONE_PRESSURE_PLATE_CLICK_ON, SoundSource.BLOCKS, 1.0F, 1.0F);
+        serverPlayer.sendSystemMessage(Component.translatable("text.illusion.block_state_tool", nextState), true);
 
         Network.CHANNEL.send(
-                PacketDistributor.PLAYER.with(()-> serverPlayer),
-                new IllusionDataS2CPacket(pos, blockData)
+                PacketDistributor.PLAYER.with(() -> serverPlayer),
+                new IllusionDataS2CPacket(pos, illusionData)
         );
+
         return InteractionResult.FAIL;
     }
 

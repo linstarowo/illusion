@@ -54,6 +54,7 @@ public class Illusion {
 
     private static AtomicBoolean isYuushyaInstalled;
 
+    @SuppressWarnings("unused")
     public static final RegistryObject<CreativeModeTab> TAB = CREATIVE_MODE_TABS.register("example_tab", () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.illusion_group"))
             .icon(() -> ILLUSION_CRYSTAL.get().getDefaultInstance())
@@ -65,6 +66,7 @@ public class Illusion {
 
 
     public Illusion() {
+        @SuppressWarnings("removal")
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         modEventBus.addListener(this::commonSetup);
 
@@ -116,6 +118,7 @@ public class Illusion {
         if(isYuushyaInstalled == null){
             isYuushyaInstalled = new AtomicBoolean();
             try{
+                @SuppressWarnings("unused")
                 var cls = Class.forName("com.yuushya.modelling.Yuushya");
                 isYuushyaInstalled.set(true);
             }catch (Exception ignored){}

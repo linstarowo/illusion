@@ -9,6 +9,7 @@
   "client": [
     "BlockEntityRenderDispatcherMixin",
     "BlockStateBaseMixin",
+    "ChunkBuilderMeshingTaskMixin",
     "SodiumBlockRendererMixin",
     "SodiumWorldRenderMixin",
     "compat.ItemBlockModelMixin",

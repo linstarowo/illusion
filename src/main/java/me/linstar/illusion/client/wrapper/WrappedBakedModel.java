@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 // Wrap the model to force rendering using the Forge Render API.
+@SuppressWarnings("deprecation")
 public class WrappedBakedModel implements BakedModel {
     final BakedModel model;
 

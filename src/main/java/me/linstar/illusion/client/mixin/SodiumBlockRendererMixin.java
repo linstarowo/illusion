@@ -28,7 +28,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = BlockRenderer.class, remap = false)
-public abstract class SodiumBlockRendererMixin {
+public abstract class SodiumBlockRendererMixin{
 
     @Shadow
     @Final
@@ -81,8 +81,8 @@ public abstract class SodiumBlockRendererMixin {
 
     @Redirect(method = "renderModel", at = @At(value = "INVOKE", target = "Lme/jellysquid/mods/sodium/client/render/chunk/compile/pipeline/BlockRenderer;isFaceVisible(Lme/jellysquid/mods/sodium/client/render/chunk/compile/pipeline/BlockRenderContext;Lnet/minecraft/core/Direction;)Z"))
     public boolean isFaceVisible(BlockRenderer instance, BlockRenderContext ctx, Direction face){
-        boolean result = this.occlusionCache.shouldDrawSide(ctx.state(), ctx.localSlice(), ctx.pos(), face);
         try {
+            boolean result = this.occlusionCache.shouldDrawSide(ctx.state(), ctx.localSlice(), ctx.pos(), face);
             if (ctx.model() instanceof WrappedBakedModel) return true;
 
             BlockPos pos = ctx.pos().offset(new BlockPos(face.getNormal()));
@@ -103,6 +103,6 @@ public abstract class SodiumBlockRendererMixin {
         }catch (Exception ignore){
         }
 
-        return result;
+        return true;
     }
 }

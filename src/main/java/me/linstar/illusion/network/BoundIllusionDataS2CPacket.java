@@ -1,5 +1,8 @@
 package me.linstar.illusion.network;
 
+import me.jellysquid.mods.sodium.client.render.SodiumWorldRenderer;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraftforge.network.NetworkEvent;
@@ -33,7 +36,15 @@ public class BoundIllusionDataS2CPacket {
     }
 
     public void handler(Supplier<NetworkEvent.Context> ctx){
-        ctx.get().enqueueWork(()-> packets.forEach(packet -> packet.execute(false)));
+        ctx.get().enqueueWork(
+                ()-> {
+                    packets.forEach(packet -> packet.execute(false));
+                    ClientLevel level = Minecraft.getInstance().level;
+                    if (level == null) return;
+                    for (int y = level.getMinSection(); y < level.getMaxSection(); ++y) {
+                        SodiumWorldRenderer.instance().scheduleRebuildForChunk(chunkPos.x, y, chunkPos.z, false);
+                    }
+                });
         ctx.get().setPacketHandled(true);
     }
 }

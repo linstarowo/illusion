@@ -43,17 +43,17 @@ public class SectionCompilerMixin {
     private final ThreadLocal<IllusionData> illusion$currentData = new ThreadLocal<>();
 
     @WrapOperation(method = "compile(Lnet/minecraft/core/SectionPos;Lnet/minecraft/client/renderer/chunk/RenderChunkRegion;Lcom/mojang/blaze3d/vertex/VertexSorting;Lnet/minecraft/client/renderer/SectionBufferBuilderPack;Ljava/util/List;)Lnet/minecraft/client/renderer/chunk/SectionCompiler$Results;", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/chunk/RenderChunkRegion;getBlockState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;"))
-    private BlockState onGetState(RenderChunkRegion instance, BlockPos pos, Operation<BlockState> original){
+    private BlockState onGetState(RenderChunkRegion instance, BlockPos pos, Operation<BlockState> original, @Local(argsOnly = true) RenderChunkRegion region){
         this.illusion$currentData.remove();
-        return original.call(instance, pos);
-    }
-
-    @Inject(method = "compile(Lnet/minecraft/core/SectionPos;Lnet/minecraft/client/renderer/chunk/RenderChunkRegion;Lcom/mojang/blaze3d/vertex/VertexSorting;Lnet/minecraft/client/renderer/SectionBufferBuilderPack;Ljava/util/List;)Lnet/minecraft/client/renderer/chunk/SectionCompiler$Results;", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/chunk/SectionCompiler;handleBlockEntity(Lnet/minecraft/client/renderer/chunk/SectionCompiler$Results;Lnet/minecraft/world/level/block/entity/BlockEntity;)V"))
-    private void onHandleBlockEntity(SectionPos p_350790_, RenderChunkRegion p_350782_, VertexSorting p_350635_, SectionBufferBuilderPack p_350612_, List<AddSectionGeometryEvent.AdditionalSectionRenderer> additionalRenderers, CallbackInfoReturnable<SectionCompiler.Results> cir, @Local BlockEntity blockEntity){
-        CompoundTag persistentData = blockEntity.getPersistentData();
-        if (persistentData.contains(IllusionData.NAME)) {
-            this.illusion$currentData.set(new IllusionData(persistentData.getCompound(IllusionData.NAME), Minecraft.getInstance().level.registryAccess()));
+        BlockState state = original.call(instance, pos);
+        if (state.hasBlockEntity()) {
+            BlockEntity blockentity = region.getBlockEntity(pos);
+            if (blockentity != null && blockentity.getPersistentData().contains(IllusionData.NAME)) {
+                this.illusion$currentData.set(new IllusionData(blockentity.getPersistentData().getCompound(IllusionData.NAME), Minecraft.getInstance().level.registryAccess()));
+                return illusion$currentData.get().getModelData().getState();
+            }
         }
+        return state;
     }
 
     @WrapOperation(method = "compile(Lnet/minecraft/core/SectionPos;Lnet/minecraft/client/renderer/chunk/RenderChunkRegion;Lcom/mojang/blaze3d/vertex/VertexSorting;Lnet/minecraft/client/renderer/SectionBufferBuilderPack;Ljava/util/List;)Lnet/minecraft/client/renderer/chunk/SectionCompiler$Results;", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;getRenderShape()Lnet/minecraft/world/level/block/RenderShape;"))
@@ -77,10 +77,9 @@ public class SectionCompilerMixin {
     @WrapOperation(method = "compile(Lnet/minecraft/core/SectionPos;Lnet/minecraft/client/renderer/chunk/RenderChunkRegion;Lcom/mojang/blaze3d/vertex/VertexSorting;Lnet/minecraft/client/renderer/SectionBufferBuilderPack;Ljava/util/List;)Lnet/minecraft/client/renderer/chunk/SectionCompiler$Results;", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/block/BlockRenderDispatcher;renderBatched(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/BlockAndTintGetter;Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;ZLnet/minecraft/util/RandomSource;Lnet/neoforged/neoforge/client/model/data/ModelData;Lnet/minecraft/client/renderer/RenderType;)V"))
     private void onRenderBatched(BlockRenderDispatcher instance, BlockState state, BlockPos pos, BlockAndTintGetter world, PoseStack stack, VertexConsumer consumer, boolean culling, RandomSource source, ModelData modelData, RenderType renderType, Operation<Void> original){
         if (this.illusion$currentData.get() != null){
-            BlockState newState = this.illusion$currentData.get().getModelData().getState();
             Vec3 offset = this.illusion$currentData.get().getOffset();
             stack.translate(offset.x, offset.y, offset.z);
-            original.call(instance, newState, pos, world, stack, consumer, culling, source, modelData, renderType);
+            original.call(instance, state, pos, world, stack, consumer, false, source, modelData, renderType);
             return;
         }
 

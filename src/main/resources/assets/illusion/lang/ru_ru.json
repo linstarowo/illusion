@@ -1,0 +1,14 @@
+{
+  "itemGroup.illusion_group": "Illusion",
+  "item.illusion.illusion_crystal": "§dИллюзорный кристал",
+  "item.illusion.movement_tool": "Инструмент перемещения",
+  "item.illusion.block_state_tool": "Инструмент состояния",
+  "item.illusion.movement_tool.state0": "§7Инструмент перемещения - §cось X",
+  "item.illusion.movement_tool.state1": "§7Инструмент перемещения - §aось Y",
+  "item.illusion.movement_tool.state2": "§7Инструмент перемещения - §9ось Z",
+  "tooltip.illusion.illusion_crystal": "Использовать на блоке-сущности, превращает в модель из второстепенной руки",
+  "tooltip.illusion.movement_tool": "Нажмите правой кнопкой мыши по воздуху, чтобы поменять направление\nНажмите правой кнопкой мыши по иллюзорному блоку, чтобы переместить его.\nШифт+Правая кнопка мыши для перемещения в другую сторону",
+  "tooltip.illusion.block_state_tool": "Нажмите правой кнопкой мыши по иллюзорному блоку, чтобы поменять его состояние",
+  "text.illusion.block_state_tool": "§7Смена индекса состояния: §f%d",
+  "gui.illusion.title": "Иллюзорный блок"
+}

@@ -25,11 +25,14 @@ import net.neoforged.neoforge.common.util.TriState;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.slf4j.Logger;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
@@ -54,6 +57,22 @@ public class Illusion {
 
     private static AtomicBoolean isYuushyaInstalled;
     private static AtomicBoolean isSableInstalled;
+
+    private static final List<Runnable> runnables = new ArrayList<>();
+
+    public static void executeNextTick(Runnable runnable){
+        synchronized (runnables) {
+            runnables.add(runnable);
+        }
+    }
+
+    @SubscribeEvent
+    public void onServerTick(ServerTickEvent.Post event){
+        synchronized (runnables){
+            runnables.forEach(Runnable::run);
+            runnables.clear();
+        }
+    }
 
     @SuppressWarnings("unused")
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> TAB = CREATIVE_MODE_TABS.register("example_tab", () -> CreativeModeTab.builder()
@@ -127,17 +146,5 @@ public class Illusion {
         return isSableInstalled.get();
     }
 
-//    public static LevelChunk getSubChunk(Level level, BlockPos pos){
-//        return getSubChunk(level, new ChunkPos(SectionPos.blockToSectionCoord(pos.getX()), SectionPos.blockToSectionCoord(pos.getZ())));
-//    }
-
-//    public static LevelChunk getSubChunk(Level level, ChunkPos pos){
-//        if (Illusion.isSableInstalled()){
-//            SubLevelContainer container = SubLevelContainer.getContainer(level);
-//            if (container != null && container.inBounds(pos)) return container.getChunk(pos);
-//        }
-//
-//        return level.getChunk(pos.x, pos.z);
-//    }
 
 }

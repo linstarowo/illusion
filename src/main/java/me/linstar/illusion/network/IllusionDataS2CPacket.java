@@ -15,6 +15,8 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class IllusionDataS2CPacket implements CustomPacketPayload {
     public static final CustomPacketPayload.Type<IllusionDataS2CPacket> TYPE =
             new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(Illusion.MOD_ID, "id"));
@@ -29,7 +31,7 @@ public class IllusionDataS2CPacket implements CustomPacketPayload {
 
     public IllusionDataS2CPacket(RegistryFriendlyByteBuf buf) {
         this.pos = buf.readBlockPos();
-        this.data = new IllusionData(buf.readNbt(), buf.registryAccess());
+        this.data = new IllusionData(Objects.requireNonNull(buf.readNbt()), buf.registryAccess());
     }
 
     public IllusionDataS2CPacket(BlockPos pos , IllusionData data) {

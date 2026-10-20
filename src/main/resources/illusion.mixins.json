@@ -12,6 +12,7 @@
     "BlockStateBaseMixin",
     "ChunkBuilderMeshTaskMixin",
     "SodiumBlockRendererMixin",
+    "compat.IllusionDataPassThrough",
     "compat.yuushya.ItemBlockModelMixin",
     "compat.yuushya.ShowBlockModelMixin",
     "vanilla.SectionCompilerMixin"

@@ -4,16 +4,13 @@ import com.llamalad7.mixinextras.sugar.Local;
 import dev.ryanhcode.sable.api.SubLevelAssemblyHelper;
 import me.linstar.illusion.Illusion;
 import me.linstar.illusion.network.IllusionDataS2CPacket;
-import net.minecraft.core.BlockPos;
 import net.minecraft.server.TickTask;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = SubLevelAssemblyHelper.class, remap = false)
 public class SubLevelAssemblyHelperMixin {

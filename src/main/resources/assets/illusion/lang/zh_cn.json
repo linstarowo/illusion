@@ -1,14 +1,17 @@
 {
   "itemGroup.illusion_group": "幻形",
   "item.illusion.illusion_crystal": "§d幻形水晶",
+  "item.illusion.copy_crystal": "§d复制水晶",
   "item.illusion.movement_tool": "移动工具",
   "item.illusion.block_state_tool": "方块状态工具",
   "item.illusion.movement_tool.state0": "§7移动工具 - §cX轴",
   "item.illusion.movement_tool.state1": "§7移动工具 - §aY轴",
   "item.illusion.movement_tool.state2": "§7移动工具 - §9Z轴",
   "tooltip.illusion.illusion_crystal": "对方块实体使用 使其具有与副手方块相同的模型",
+  "tooltip.illusion.copy_crystal": "潜行右键拷贝一个方块的幻形数据\n右键将数据粘贴到另一个方块上\n右键空气清除已复制的数据",
   "tooltip.illusion.movement_tool": "右键切换模式\n对幻化过的方块右键使其正向移动, 潜行右键反向移动",
   "tooltip.illusion.block_state_tool": "对幻化过的方块右键以切换其方块状态",
   "text.illusion.block_state_tool": "§7切换至方块状态 序号: §f%d",
+  "text.illusion.copy_crystal.delete": "§7已清除",
   "gui.illusion.title": "幻形方块"
 }

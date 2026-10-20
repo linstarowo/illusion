@@ -12,9 +12,9 @@
     "BlockStateBaseMixin",
     "ChunkBuilderMeshTaskMixin",
     "SodiumBlockRendererMixin",
-    "compat.IllusionDataPassThrough",
     "compat.yuushya.ItemBlockModelMixin",
     "compat.yuushya.ShowBlockModelMixin",
+    "compat.IllusionDataPassThrough",
     "vanilla.SectionCompilerMixin"
   ],
   "injectors": {

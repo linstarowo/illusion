@@ -4,10 +4,7 @@ import com.mojang.logging.LogUtils;
 import me.linstar.illusion.attachment.IllusionChunkData;
 import me.linstar.illusion.attachment.IllusionChunkDataSerializer;
 import me.linstar.illusion.command.TransformDataCommand;
-import me.linstar.illusion.item.BlockStateTool;
-import me.linstar.illusion.item.IllusionCrystal;
-import me.linstar.illusion.item.IllusionItem;
-import me.linstar.illusion.item.MovementTool;
+import me.linstar.illusion.item.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -54,6 +51,7 @@ public class Illusion {
     public static final DeferredHolder<Item, IllusionCrystal> ILLUSION_CRYSTAL = ITEMS.register(IllusionCrystal.NAME, IllusionCrystal::new);
     public static final DeferredHolder<Item, BlockStateTool> BLOCK_STATE_TOOL = ITEMS.register(BlockStateTool.NAME, BlockStateTool::new);
     public static final DeferredHolder<Item, MovementTool> MOVEMENT_TOOL = ITEMS.register(MovementTool.NAME, MovementTool::new);
+    public static final DeferredHolder<Item, CopyCrystal> COPY_CRYSTAL = ITEMS.register(CopyCrystal.NAME, CopyCrystal::new);
 
     private static AtomicBoolean isYuushyaInstalled;
     private static AtomicBoolean isSableInstalled;
@@ -80,6 +78,7 @@ public class Illusion {
             .icon(() -> ILLUSION_CRYSTAL.get().getDefaultInstance())
             .displayItems((parameters, output) -> {
                 output.accept(ILLUSION_CRYSTAL.get());
+                output.accept(COPY_CRYSTAL.get());
                 output.accept(BLOCK_STATE_TOOL.get());
                 output.accept(MOVEMENT_TOOL.get());
             }).build());

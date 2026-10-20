@@ -31,16 +31,12 @@ public abstract class BlockStateBaseMixin {
 
     @Inject(method = "getOcclusionShape", at = @At("HEAD"), cancellable = true)
     private void modifyOcclusionShape(BlockGetter getter, BlockPos pos, CallbackInfoReturnable<VoxelShape> cir){
-        if (IllusionData.containsData(getter, pos)){
-            cir.setReturnValue(EMPTY_SHAPE);
-        }
+        if (IllusionData.containsData(getter, pos)) cir.setReturnValue(EMPTY_SHAPE);
     }
 
     @Inject(method = "getFaceOcclusionShape", at = @At("HEAD"), cancellable = true)
     private void modifyFaceOcclusionShape(BlockGetter getter, BlockPos pos, Direction p_60658_, CallbackInfoReturnable<VoxelShape> cir){
-        if (IllusionData.containsData(getter, pos)){
-            cir.setReturnValue(EMPTY_SHAPE);
-        }
+        if (IllusionData.containsData(getter, pos)) cir.setReturnValue(EMPTY_SHAPE);
     }
 
     @Inject(method = "getLightBlock", at = @At("HEAD"), cancellable = true)

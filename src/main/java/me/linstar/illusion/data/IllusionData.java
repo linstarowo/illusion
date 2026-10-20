@@ -300,9 +300,13 @@ public class IllusionData {
 
     public static boolean containsData(BlockGetter getter, BlockPos pos){
         if (getter == null) return false;
-        var blockEntity = getter.getBlockEntity(pos);
-        if (blockEntity == null) return false;
+        try {
+            var blockEntity = getter.getBlockEntity(pos);
+            if (blockEntity == null) return false;
 
-        return blockEntity.getPersistentData().contains(IllusionData.NAME);
+            return blockEntity.getPersistentData().contains(IllusionData.NAME);
+        }catch (Exception e){
+            return false;
+        }
     }
 }

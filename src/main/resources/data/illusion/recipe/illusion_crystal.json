@@ -14,7 +14,7 @@
     }
   },
   "result": {
-    "item": "illusion:illusion_crystal",
+    "id": "illusion:illusion_crystal",
     "count": 2
   }
 }

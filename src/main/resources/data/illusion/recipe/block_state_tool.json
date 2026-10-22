@@ -1,5 +1,5 @@
 {
-  "type": "crafting_shapeless",
+  "type": "minecraft:crafting_shapeless",
   "ingredients": [
     {
       "item": "minecraft:amethyst_shard"
@@ -9,7 +9,7 @@
     }
   ],
   "result": {
-    "item": "illusion:block_state_tool",
+    "id": "illusion:block_state_tool",
     "count": 1
   }
 }

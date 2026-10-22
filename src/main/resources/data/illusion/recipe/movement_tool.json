@@ -17,7 +17,7 @@
     }
   },
   "result": {
-    "item": "illusion:movement_tool",
+    "id": "illusion:movement_tool",
     "count": 1
   }
 }

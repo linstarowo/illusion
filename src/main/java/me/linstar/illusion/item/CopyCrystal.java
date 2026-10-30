@@ -18,6 +18,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -34,6 +35,10 @@ import java.util.Objects;
 public class CopyCrystal extends Item implements IllusionItem {
     public static final String NAME = "copy_crystal";
     public static final String DATA = "copy_data";
+
+    public record CopyComponent(IllusionData data) implements TooltipComponent {
+
+    }
 
 
     public CopyCrystal() {

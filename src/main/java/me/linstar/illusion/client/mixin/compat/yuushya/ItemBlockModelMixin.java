@@ -3,6 +3,7 @@ package me.linstar.illusion.client.mixin.compat.yuushya;
 import com.yuushya.modelling.blockentity.itemblock.ItemBlockModel;
 import com.yuushya.modelling.blockentity.transformData.TransformItemData;
 import com.yuushya.modelling.client.NeoItemBlockModel;
+import me.linstar.illusion.client.IllusionClient;
 import me.linstar.illusion.data.IllusionData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
@@ -32,8 +33,7 @@ public abstract class ItemBlockModelMixin extends ItemBlockModel {
 
     @Unique
     private static final ModelProperty<BlockPos> ENTITY_POS = new ModelProperty<>();
-    @Unique
-    private static final ModelProperty<IllusionData> ILLUSION_DATA_PROPERTY = new ModelProperty<>();
+
 
     public ItemBlockModelMixin(Direction facing) {
         super(facing);
@@ -46,14 +46,13 @@ public abstract class ItemBlockModelMixin extends ItemBlockModel {
         var data = blockEntity.getPersistentData();
         if (!data.contains(IllusionData.NAME)) return ;
 
-        cir.setReturnValue(ModelData.builder().with(ENTITY_POS, blockEntity.getBlockPos()).with(ILLUSION_DATA_PROPERTY, new IllusionData(data.getCompound(IllusionData.NAME), Minecraft.getInstance().level.registryAccess())).build());
+        cir.setReturnValue(ModelData.builder().with(ENTITY_POS, blockEntity.getBlockPos()).with(IllusionClient.ILLUSION_DATA_PROPERTY, new IllusionData(data.getCompound(IllusionData.NAME), Minecraft.getInstance().level.registryAccess())).build());
     }
 
     @Inject(method = "getQuads(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;Lnet/minecraft/util/RandomSource;Lnet/neoforged/neoforge/client/model/data/ModelData;Lnet/minecraft/client/renderer/RenderType;)Ljava/util/List;", at = @At("HEAD"), cancellable = true)
     private void getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource rand, @NotNull ModelData data, @Nullable RenderType renderType, CallbackInfoReturnable<List<BakedQuad>> cir){
-        IllusionData illusionData = data.get(ILLUSION_DATA_PROPERTY);
-        BlockPos pos = data.get(ENTITY_POS);
-        if (pos != null && illusionData != null && illusionData.getType().equals(IllusionData.DataType.CUSTOM_ITEM)) {
+        IllusionData illusionData = data.get(IllusionClient.ILLUSION_DATA_PROPERTY);
+        if (illusionData != null && illusionData.getType().equals(IllusionData.DataType.CUSTOM_ITEM)) {
             cir.setReturnValue(this.getQuads(side, rand, ((IllusionData.YuushayaItemModelData) illusionData.getModelData()).transformData(), null));
         }
     }

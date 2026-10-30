@@ -53,6 +53,7 @@ public class IllusionClient {
         if (stack.getItem() instanceof CopyCrystal){
             var tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
             if (tag.contains(CopyCrystal.DATA)){
+                //noinspection DataFlowIssue
                 event.getTooltipElements().add(Either.right(new CopyCrystal.CopyComponent(new IllusionData(tag.getCompound(CopyCrystal.DATA), Minecraft.getInstance().level.registryAccess()))));
             }
         }

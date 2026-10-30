@@ -46,6 +46,7 @@ public abstract class ItemBlockModelMixin extends ItemBlockModel {
         var data = blockEntity.getPersistentData();
         if (!data.contains(IllusionData.NAME)) return ;
 
+        //noinspection DataFlowIssue
         cir.setReturnValue(ModelData.builder().with(ENTITY_POS, blockEntity.getBlockPos()).with(IllusionClient.ILLUSION_DATA_PROPERTY, new IllusionData(data.getCompound(IllusionData.NAME), Minecraft.getInstance().level.registryAccess())).build());
     }
 
